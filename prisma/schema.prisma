@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+model Faculty {
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  password    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  halls       Hall[]
+  departments Department[]
+  examEvents  ExamEvent[]
+}
+
+model Hall {
+  id        String   @id @default(cuid())
+  name      String
+  code      String
+  capacity  Int
+  facultyId String
+  faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  examHalls       ExamHall[]
+  examDistributions ExamDistribution[]
+  seatAssignments SeatAssignment[]
+}
+
+model Department {
+  id           String   @id @default(cuid())
+  name         String
+  matricFormat String
+  facultyId    String
+  faculty      Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  levels Level[]
+}
+
+model Level {
+  id           String     @id @default(cuid())
+  name         String
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  students          Student[]
+  examLevels        ExamLevel[]
+  examDistributions ExamDistribution[]
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  matricNo  String
+  name      String
+  levelId   String
+  level     Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  seatAssignments SeatAssignment[]
+}
+
+// ==================== EXAM MODELS ====================
+
+model ExamEvent {
+  id        String   @id @default(cuid())
+  title     String
+  date      DateTime
+  facultyId String
+  faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  examHalls         ExamHall[]
+  examLevels        ExamLevel[]
+  examDistributions ExamDistribution[]
+  seatAssignments   SeatAssignment[]
+}
+
+model ExamHall {
+  id      String    @id @default(cuid())
+  examId  String
+  exam    ExamEvent @relation(fields: [examId], references: [id], onDelete: Cascade)
+  hallId  String
+  hall    Hall      @relation(fields: [hallId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, hallId])
+}
+
+model ExamLevel {
+  id      String    @id @default(cuid())
+  examId  String
+  exam    ExamEvent @relation(fields: [examId], references: [id], onDelete: Cascade)
+  levelId String
+  level   Level     @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, levelId])
+}
+
+model ExamDistribution {
+  id             String    @id @default(cuid())
+  examId         String
+  exam           ExamEvent @relation(fields: [examId], references: [id], onDelete: Cascade)
+  hallId         String
+  hall           Hall      @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  levelId        String
+  level          Level     @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  allocatedCount Int
+  startIndex     Int       // Starting index in the level's student list
+  endIndex       Int       // Ending index in the level's student list
+
+  @@unique([examId, hallId, levelId])
+}
+
+model SeatAssignment {
+  id         String    @id @default(cuid())
+  examId     String
+  exam       ExamEvent @relation(fields: [examId], references: [id], onDelete: Cascade)
+  hallId     String
+  hall       Hall      @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  studentId  String
+  student    Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  seatNumber Int
+
+  @@unique([examId, studentId])
+}
