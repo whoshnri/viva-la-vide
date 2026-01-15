@@ -26,6 +26,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: "Inter", system-ui, sans-serif;
+  zoom : 85%
 }
 
 /* Sharp theme - no rounded corners */
