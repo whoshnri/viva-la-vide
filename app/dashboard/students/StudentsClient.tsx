@@ -16,6 +16,7 @@ interface Student {
     id: string
     matricNo: string
     name: string
+    realMatric : string
 }
 
 interface Level {
@@ -47,7 +48,9 @@ export default function StudentsClient({ departments }: { departments: Departmen
     // Form states
     const [deptName, setDeptName] = useState('')
     const [deptMatricFormat, setDeptMatricFormat] = useState('')
+    const [deptID, setDeptId] = useState('')
     const [levelName, setLevelName] = useState('')
+    const [levelId, setLevelId] = useState('')
     const [studentMatricNo, setStudentMatricNo] = useState('')
     const [studentName, setStudentName] = useState('')
     const [csvFile, setCsvFile] = useState<File | null>(null)
@@ -56,7 +59,9 @@ export default function StudentsClient({ departments }: { departments: Departmen
         setDeptName('')
         setDeptMatricFormat('')
         setLevelName('')
+        setLevelId('')
         setStudentMatricNo('')
+        setDeptId("")
         setStudentName('')
         setCsvFile(null)
         setError(null)
@@ -66,7 +71,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
         e.preventDefault()
         setLoading(true)
         setError(null)
-        const result = await createDepartmentAction({ name: deptName, matricFormat: deptMatricFormat })
+        const result = await createDepartmentAction({ name: deptName, matricFormat: deptMatricFormat, deptID : deptID })
         setLoading(false)
         if ('error' in result) {
             setError(result.error)
@@ -90,7 +95,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
         if (!showLevelModal) return
         setLoading(true)
         setError(null)
-        const result = await createLevelAction({ name: levelName, departmentId: showLevelModal })
+        const result = await createLevelAction({ name: levelName, departmentId: showLevelModal, levelId : levelId })
         setLoading(false)
         if ('error' in result) {
             setError(result.error)
@@ -114,10 +119,14 @@ export default function StudentsClient({ departments }: { departments: Departmen
         if (!showStudentModal) return
         setLoading(true)
         setError(null)
+        let main = studentMatricNo
+        if(studentMatricNo.length < 3){
+            main = ("0".repeat(3 - studentMatricNo.length) + studentMatricNo)
+        }
         const result = await createStudentAction({
-            matricNo: studentMatricNo,
+            matricNo: main,
             name: studentName,
-            levelId: showStudentModal
+            levelId: showStudentModal,
         })
         setLoading(false)
         if ('error' in result) {
@@ -267,7 +276,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                                                         {level.students.map((student) => (
                                                                             <tr key={student.id}>
                                                                                 <td>{student.matricNo}</td>
-                                                                                <td className="font-mono">{dept.matricFormat}{student.matricNo}</td>
+                                                                                <td className="font-mono">{student.realMatric}</td>
                                                                                 <td>{student.name}</td>
                                                                                 <td>
                                                                                     <button
@@ -326,6 +335,20 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                 />
                                 <p className="text-sm text-gray-600 mt-1">This will prefix all student matric numbers</p>
                             </div>
+                            <div className="form-group">
+                                <label className="form-label" htmlFor="deptId">Department ID</label>
+                                <input
+                                    type="text"
+                                    id="matricFormat"
+                                    value={deptID}
+                                    onChange={(e) => setDeptId(e.target.value)}
+                                    className="input"
+                                    placeholder="e.g. 321, 228"
+                                    required
+                                />
+                                <p className="text-sm text-gray-600 mt-1">This is part of the prefex that will come before the student number</p>
+                            </div>
+                            
                             {error && <p className="error-text mb-4">{error}</p>}
                             <div className="flex gap-4">
                                 <button type="button" className="btn flex-1" onClick={() => { setShowDeptModal(false); resetForms() }}>Cancel</button>
@@ -353,6 +376,20 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                     placeholder="e.g. 100, ND1"
                                     required
                                 />
+                                
+                            </div>
+                             <div className="form-group">
+                                <label className="form-label" htmlFor="levelName">Year No</label>
+                                <input
+                                    type="text"
+                                    id="levelName"
+                                    value={levelId}
+                                    onChange={(e) => setLevelId(e.target.value)}
+                                    className="input"
+                                    placeholder="e.g. 23, 34"
+                                    required
+                                />
+                                
                             </div>
                             {error && <p className="error-text mb-4">{error}</p>}
                             <div className="flex gap-4">

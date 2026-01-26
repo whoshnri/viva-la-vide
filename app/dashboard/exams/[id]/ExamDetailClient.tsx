@@ -9,6 +9,7 @@ interface SeatAssignment {
     student: {
         matricNo: string
         name: string
+        realMatric : string
         level: {
             name: string
             department: { name: string; matricFormat: string }
@@ -373,7 +374,7 @@ export default function ExamDetailClient({ exam }: { exam: ExamData }) {
                                             <td className="font-bold">{seat.seatNumber}</td>
                                             <td>{seat.hall.code}</td>
                                             <td className="font-mono">
-                                                {seat.student.level.department.matricFormat}{seat.student.matricNo}
+                                                {seat.student.realMatric}
                                             </td>
                                             <td>{seat.student.name}</td>
                                             <td>{seat.student.level.department.name}</td>

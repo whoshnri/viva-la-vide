@@ -50,7 +50,7 @@ export default function StudentPortal() {
                                 value={matricNo}
                                 onChange={(e) => setMatricNo(e.target.value)}
                                 className="input text-lg py-3 px-4"
-                                placeholder="Enter Matric No (e.g., 12345)"
+                                placeholder="Enter Matric No (e.g., F/ND/23/321061)"
                             />
                         </div>
                         <button
@@ -60,7 +60,7 @@ export default function StudentPortal() {
                         >
                             {loading ? (
                                 <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <circle className="opacity-55" cx="12" cy="12" r="10" stroke="black" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                             ) : (
@@ -79,7 +79,10 @@ export default function StudentPortal() {
 
             {/* RESULTS SECTION (Visible on Print) */}
             {data && (
-                <div className="w-full max-w-3xl mt-8 bg-white p-8 md:p-10 rounded-xl shadow-xl border border-gray-100 print:shadow-none print:border-none print:w-full print:mt-0 print:p-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div style={{
+                    zoom : .85
+                }}
+                 className="w-full max-w-3xl mt-8 bg-white p-8 md:p-10 rounded-xl shadow-xl border border-gray-100 print:shadow-none print:border-none print:w-full print:mt-0 print:p-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {/* SLIP HEADER */}
                     <div className="flex justify-between items-start border-b border-gray-100 pb-6 mb-8">
                         <div>
@@ -102,7 +105,7 @@ export default function StudentPortal() {
                         <div className="text-right group">
                             <p className="text-gray-400 uppercase text-[10px] font-bold tracking-widest mb-1">Matriculation Number</p>
                             <p className="font-bold text-lg text-gray-900 font-mono group-hover:text-[#4A7044] transition-colors">
-                                {data.level.department.matricFormat ? `${data.level.department.matricFormat}/` : ''}{data.matricNo}
+                                {data.realMatric}
                             </p>
                         </div>
                         <div>

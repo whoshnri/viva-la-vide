@@ -142,17 +142,21 @@ export async function deleteHallAction(id: string): Promise<ActionResponse> {
 
 // ==================== DEPARTMENT ACTIONS ====================
 
-export async function createDepartmentAction(data: { name: string; matricFormat: string }): Promise<ActionResponse> {
+export async function createDepartmentAction(data: { name: string; matricFormat: string, deptID: string }): Promise<ActionResponse> {
     try {
         const faculty = await requireAuth()
 
         if (!data.name || !data.matricFormat) {
             return { error: 'All fields are required' }
         }
-
-        await createDepartment({ ...data, facultyId: faculty.id })
-        revalidatePath('/dashboard/students')
-        return { success: true }
+        const res = await createDepartment({ ...data, facultyId: faculty.id })
+        if (res.success) {
+            revalidatePath('/dashboard/students')
+            return { success: true }
+        }
+        else{
+            return { error: 'Failed to create department' }
+        }
     } catch {
         return { error: 'Failed to create department' }
     }
@@ -182,7 +186,7 @@ export async function deleteDepartmentAction(id: string): Promise<ActionResponse
 
 // ==================== LEVEL ACTIONS ====================
 
-export async function createLevelAction(data: { name: string; departmentId: string }): Promise<ActionResponse> {
+export async function createLevelAction(data: { name: string; departmentId: string, levelId: string }): Promise<ActionResponse> {
     try {
         await requireAuth()
 
@@ -330,7 +334,7 @@ export async function deleteExamAction(id: string): Promise<ActionResponse> {
     }
 }
 
-export async function generateAllocationAction(examId: string){
+export async function generateAllocationAction(examId: string) {
     try {
         await requireAuth()
         await generateExamDistribution(examId)

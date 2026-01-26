@@ -128,8 +128,26 @@ export async function getDepartments(facultyId: string) {
     })
 }
 
-export async function createDepartment(data: { name: string; matricFormat: string; facultyId: string }) {
-    return prisma.department.create({ data })
+export async function createDepartment(data: { name: string; matricFormat: string; facultyId: string, deptID: string }) {
+
+    try {
+        const dept = await prisma.department.create({
+            data: {
+                name: data.name,
+                matricFormat: data.matricFormat,
+                facultyId: data.facultyId,
+                deptPrefix: data.deptID
+            }
+        })
+
+
+        return { success: true }
+    }
+    catch (err) {
+        console.log("Im here", err)
+
+        return { success: false }
+    }
 }
 
 export async function updateDepartment(id: string, data: { name?: string; matricFormat?: string }) {
@@ -152,7 +170,7 @@ export async function getLevels(departmentId: string) {
     })
 }
 
-export async function createLevel(data: { name: string; departmentId: string }) {
+export async function createLevel(data: { name: string; departmentId: string, levelId: string }) {
     return prisma.level.create({ data })
 }
 
@@ -174,11 +192,26 @@ export async function getStudents(levelId: string) {
 }
 
 export async function createStudent(data: { matricNo: string; name: string; levelId: string }) {
-    return prisma.student.create({ data })
+    // get the department and level
+    const level = await prisma.level.findUnique({ where: { id: data.levelId }, include: { department: true } })
+    const realMatric = `${level?.department.matricFormat}/${level?.levelId}/${level?.department.deptPrefix}0${data.matricNo}`
+    return prisma.student.create({ data: { ...data, realMatric } })
 }
 
 export async function createManyStudents(students: { matricNo: string; name: string; levelId: string }[]) {
-    return prisma.student.createMany({ data: students, skipDuplicates: true })
+    // get the level from the level Id of one student 
+    const testCase = students[0]
+    const level = await prisma.level.findUnique({ where: { id: testCase.levelId }, include: { department: true } })
+
+    const realMatricconstructor = `${level?.department.matricFormat}/${level?.levelId}/${level?.department.deptPrefix}0`
+
+    const newStudents = students.map(student => ({
+        ...student,
+        realMatric: realMatricconstructor + student.matricNo
+    }))
+
+    // update the matric no
+    return prisma.student.createMany({ data: newStudents, skipDuplicates: true })
 }
 
 export async function updateStudent(id: string, data: { matricNo?: string; name?: string }) {

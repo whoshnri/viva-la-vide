@@ -4,16 +4,10 @@ import prisma from '@/lib/db'
 
 export async function checkSeatAllocation(matricNo: string) {
     if (!matricNo) return { error: 'Matriculation number is required' }
-    // get the last 3 characters of the matricNo
-    const lastThree = matricNo.slice(-3)
-
-    // get the level code (3 numbers before the last 3 characters)
-    const levelCode = matricNo.slice(0, -3)
-
 
     try {
         const student = await prisma.student.findFirst({
-            where: { matricNo : lastThree },
+            where: { realMatric : matricNo },
             include: {
                 level: { include: { department: { include: { faculty: true } } } },
                 seatAssignments: {
