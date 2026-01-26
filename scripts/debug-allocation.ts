@@ -111,83 +111,83 @@ export async function generateExamDistribution(examId: string) {
 }
 
 
-async function main() {
-    console.log('--- Starting Debug Script (Isolated Logic) ---')
+// async function main() {
+//     console.log('--- Starting Debug Script (Isolated Logic) ---')
 
-    // 1. Cleanup
-    try {
-        await prisma.examEvent.deleteMany({ where: { title: 'DEBUG_EXAM' } })
-        await prisma.student.deleteMany({ where: { matricNo: { startsWith: 'DEBUG_' } } })
-        await prisma.level.deleteMany({ where: { name: 'DEBUG_LEVEL' } })
-        await prisma.hall.deleteMany({ where: { name: 'DEBUG_HALL' } })
-        const oldFaculty = await prisma.faculty.findUnique({ where: { email: 'debug@test.com' } })
-        if (oldFaculty) {
-            await prisma.faculty.delete({ where: { id: oldFaculty.id } })
-        }
-    } catch (e) {
-        console.log('Cleanup minor error (ignoring):', e)
-    }
+//     // 1. Cleanup
+//     try {
+//         await prisma.examEvent.deleteMany({ where: { title: 'DEBUG_EXAM' } })
+//         await prisma.student.deleteMany({ where: { matricNo: { startsWith: 'DEBUG_' } } })
+//         await prisma.level.deleteMany({ where: { name: 'DEBUG_LEVEL' } })
+//         await prisma.hall.deleteMany({ where: { name: 'DEBUG_HALL' } })
+//         const oldFaculty = await prisma.faculty.findUnique({ where: { email: 'debug@test.com' } })
+//         if (oldFaculty) {
+//             await prisma.faculty.delete({ where: { id: oldFaculty.id } })
+//         }
+//     } catch (e) {
+//         console.log('Cleanup minor error (ignoring):', e)
+//     }
 
-    // 2. Setup Data
-    console.log('Creating Faculty...')
-    const faculty = await prisma.faculty.create({
-        data: { name: 'Debug Faculty', email: 'debug@test.com', password: 'hash' }
-    })
+//     // 2. Setup Data
+//     console.log('Creating Faculty...')
+//     const faculty = await prisma.faculty.create({
+//         data: { name: 'Debug Faculty', email: 'debug@test.com', password: 'hash' }
+//     })
 
-    console.log('Creating Department & Level...')
-    const dept = await prisma.department.create({
-        data: { name: 'Debug Dept', matricFormat: 'DEBUG', facultyId: faculty.id }
-    })
-    const level = await prisma.level.create({
-        data: { name: 'DEBUG_LEVEL', departmentId: dept.id }
-    })
+//     console.log('Creating Department & Level...')
+//     const dept = await prisma.department.create({
+//         data: { name: 'Debug Dept', matricFormat: 'DEBUG', facultyId: faculty.id }
+//     })
+//     const level = await prisma.level.create({
+//         data: { name: 'DEBUG_LEVEL', departmentId: dept.id }
+//     })
 
-    console.log('Creating Hall...')
-    const hall = await prisma.hall.create({
-        data: { name: 'DEBUG_HALL', code: 'DH', capacity: 100, facultyId: faculty.id }
-    })
+//     console.log('Creating Hall...')
+//     const hall = await prisma.hall.create({
+//         data: { name: 'DEBUG_HALL', code: 'DH', capacity: 100, facultyId: faculty.id }
+//     })
 
-    console.log('Creating 50 Students...')
-    const studentsData = Array.from({ length: 50 }).map((_, i) => ({
-        matricNo: `DEBUG_${i}`,
-        name: `Student ${i}`,
-        levelId: level.id
-    }))
-    await prisma.student.createMany({ data: studentsData })
+//     console.log('Creating 50 Students...')
+//     const studentsData = Array.from({ length: 50 }).map((_, i) => ({
+//         matricNo: `DEBUG_${i}`,
+//         name: `Student ${i}`,
+//         levelId: level.id
+//     }))
+//     await prisma.student.createMany({ data: studentsData })
 
-    console.log('Creating Exam...')
-    const exam = await prisma.examEvent.create({
-        data: {
-            title: 'DEBUG_EXAM',
-            date: new Date(),
-            facultyId: faculty.id,
-            examHalls: { create: { hallId: hall.id } },
-            examLevels: { create: { levelId: level.id } }
-        }
-    })
+//     console.log('Creating Exam...')
+//     const exam = await prisma.examEvent.create({
+//         data: {
+//             title: 'DEBUG_EXAM',
+//             date: new Date(),
+//             facultyId: faculty.id,
+//             examHalls: { create: { hallId: hall.id } },
+//             examLevels: { create: { levelId: level.id } }
+//         }
+//     })
 
-    // 3. Run Logic
-    console.log('Running generateExamDistribution...')
-    const dists = await generateExamDistribution(exam.id)
+//     // 3. Run Logic
+//     console.log('Running generateExamDistribution...')
+//     const dists = await generateExamDistribution(exam.id)
 
-    console.log('Distributions returned:')
-    console.dir(dists, { depth: null })
+//     console.log('Distributions returned:')
+//     console.dir(dists, { depth: null })
 
-    // 4. Verify DB
-    console.log('Fetching Distributions from DB...')
-    const savedDists = await prisma.examDistribution.findMany({
-        where: { examId: exam.id }
-    })
-    console.log('Saved Distributions:', savedDists)
+//     // 4. Verify DB
+//     console.log('Fetching Distributions from DB...')
+//     const savedDists = await prisma.examDistribution.findMany({
+//         where: { examId: exam.id }
+//     })
+//     console.log('Saved Distributions:', savedDists)
 
-    const invalid = savedDists.filter(d => d.startIndex === undefined || d.startIndex === null || d.endIndex === undefined || d.endIndex === null)
-    if (invalid.length > 0) {
-        console.error('FAILED: Found distributions with missing indices:', invalid)
-    } else {
-        console.log('SUCCESS: All distributions have indices.')
-    }
-}
+//     const invalid = savedDists.filter(d => d.startIndex === undefined || d.startIndex === null || d.endIndex === undefined || d.endIndex === null)
+//     if (invalid.length > 0) {
+//         console.error('FAILED: Found distributions with missing indices:', invalid)
+//     } else {
+//         console.log('SUCCESS: All distributions have indices.')
+//     }
+// }
 
-main()
-    .catch(e => console.error(e))
-    .finally(() => prisma.$disconnect())
+// main()
+//     .catch(e => console.error(e))
+//     .finally(() => prisma.$disconnect())
