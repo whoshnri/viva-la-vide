@@ -47,19 +47,17 @@ export default function StudentsClient({ departments }: { departments: Departmen
 
     // Form states
     const [deptName, setDeptName] = useState('')
-    const [deptMatricFormat, setDeptMatricFormat] = useState('')
+    const [matricFormat, setLevelMatricFormat] = useState('')
     const [deptID, setDeptId] = useState('')
     const [levelName, setLevelName] = useState('')
-    const [levelId, setLevelId] = useState('')
     const [studentMatricNo, setStudentMatricNo] = useState('')
     const [studentName, setStudentName] = useState('')
     const [csvFile, setCsvFile] = useState<File | null>(null)
 
     const resetForms = () => {
         setDeptName('')
-        setDeptMatricFormat('')
+        setLevelMatricFormat('')
         setLevelName('')
-        setLevelId('')
         setStudentMatricNo('')
         setDeptId("")
         setStudentName('')
@@ -71,7 +69,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
         e.preventDefault()
         setLoading(true)
         setError(null)
-        const result = await createDepartmentAction({ name: deptName, matricFormat: deptMatricFormat, deptID : deptID })
+        const result = await createDepartmentAction({ name: deptName})
         setLoading(false)
         if ('error' in result) {
             setError(result.error)
@@ -95,7 +93,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
         if (!showLevelModal) return
         setLoading(true)
         setError(null)
-        const result = await createLevelAction({ name: levelName, departmentId: showLevelModal, levelId : levelId })
+        const result = await createLevelAction({ name: levelName, departmentId: showLevelModal, matricFormat : matricFormat })
         setLoading(false)
         if ('error' in result) {
             setError(result.error)
@@ -188,7 +186,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                             >
                                 <div>
                                     <h3 className="text-lg font-bold">{dept.name}</h3>
-                                    <p className="text-sm text-gray-600">Format: {dept.matricFormat}</p>
+                                    {/* <p className="text-sm text-gray-600">Format: {dept.matricFormat}</p> */}
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <span className="badge">
@@ -322,32 +320,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                     required
                                 />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label" htmlFor="matricFormat">Matric Format</label>
-                                <input
-                                    type="text"
-                                    id="matricFormat"
-                                    value={deptMatricFormat}
-                                    onChange={(e) => setDeptMatricFormat(e.target.value)}
-                                    className="input"
-                                    placeholder="e.g. F/ND/23/"
-                                    required
-                                />
-                                <p className="text-sm text-gray-600 mt-1">This will prefix all student matric numbers</p>
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label" htmlFor="deptId">Department ID</label>
-                                <input
-                                    type="text"
-                                    id="matricFormat"
-                                    value={deptID}
-                                    onChange={(e) => setDeptId(e.target.value)}
-                                    className="input"
-                                    placeholder="e.g. 321, 228"
-                                    required
-                                />
-                                <p className="text-sm text-gray-600 mt-1">This is part of the prefex that will come before the student number</p>
-                            </div>
+                        
                             
                             {error && <p className="error-text mb-4">{error}</p>}
                             <div className="flex gap-4">
@@ -355,7 +328,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                 <button type="submit" className="btn btn-primary flex-1" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
                             </div>
                         </form>
-                    </div>
+                    </div>  
                 </div>
             )}
 
@@ -379,17 +352,17 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                 
                             </div>
                              <div className="form-group">
-                                <label className="form-label" htmlFor="levelName">Year No</label>
+                                <label className="form-label" htmlFor="matricFormat">Matric Format</label>
                                 <input
                                     type="text"
-                                    id="levelName"
-                                    value={levelId}
-                                    onChange={(e) => setLevelId(e.target.value)}
+                                    id="matricFormat"
+                                    value={matricFormat}
+                                    onChange={(e) => setLevelMatricFormat(e.target.value)}
                                     className="input"
-                                    placeholder="e.g. 23, 34"
+                                    placeholder="e.g. F/ND/23/321"
                                     required
                                 />
-                                
+                            <p className='text-sm px-4 py-3'>This will prefix the matric number for each student</p>
                             </div>
                             {error && <p className="error-text mb-4">{error}</p>}
                             <div className="flex gap-4">

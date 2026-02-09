@@ -128,15 +128,13 @@ export async function getDepartments(facultyId: string) {
     })
 }
 
-export async function createDepartment(data: { name: string; matricFormat: string; facultyId: string, deptID: string }) {
+export async function createDepartment(data: { name: string; facultyId: string}) {
 
     try {
         const dept = await prisma.department.create({
             data: {
                 name: data.name,
-                matricFormat: data.matricFormat,
                 facultyId: data.facultyId,
-                deptPrefix: data.deptID
             }
         })
 
@@ -150,7 +148,7 @@ export async function createDepartment(data: { name: string; matricFormat: strin
     }
 }
 
-export async function updateDepartment(id: string, data: { name?: string; matricFormat?: string }) {
+export async function updateDepartment(id: string, data: { name?: string }) {
     return prisma.department.update({ where: { id }, data })
 }
 
@@ -170,7 +168,7 @@ export async function getLevels(departmentId: string) {
     })
 }
 
-export async function createLevel(data: { name: string; departmentId: string, levelId: string }) {
+export async function createLevel(data: { name: string; departmentId: string, matricFormat : string}) {
     return prisma.level.create({ data })
 }
 
@@ -194,7 +192,7 @@ export async function getStudents(levelId: string) {
 export async function createStudent(data: { matricNo: string; name: string; levelId: string }) {
     // get the department and level
     const level = await prisma.level.findUnique({ where: { id: data.levelId }, include: { department: true } })
-    const realMatric = `${level?.department.matricFormat}/${level?.levelId}/${level?.department.deptPrefix}0${data.matricNo}`
+    const realMatric = `${level?.matricFormat}0${data.matricNo}`
     return prisma.student.create({ data: { ...data, realMatric } })
 }
 
@@ -203,11 +201,11 @@ export async function createManyStudents(students: { matricNo: string; name: str
     const testCase = students[0]
     const level = await prisma.level.findUnique({ where: { id: testCase.levelId }, include: { department: true } })
 
-    const realMatricconstructor = `${level?.department.matricFormat}/${level?.levelId}/${level?.department.deptPrefix}0`
+    const realMatricConstructor = `${level?.matricFormat}0`
 
     const newStudents = students.map(student => ({
         ...student,
-        realMatric: realMatricconstructor + student.matricNo
+        realMatric: realMatricConstructor + student.matricNo
     }))
 
     // update the matric no

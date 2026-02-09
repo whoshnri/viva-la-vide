@@ -142,11 +142,11 @@ export async function deleteHallAction(id: string): Promise<ActionResponse> {
 
 // ==================== DEPARTMENT ACTIONS ====================
 
-export async function createDepartmentAction(data: { name: string; matricFormat: string, deptID: string }): Promise<ActionResponse> {
+export async function createDepartmentAction(data: { name: string }): Promise<ActionResponse> {
     try {
         const faculty = await requireAuth()
 
-        if (!data.name || !data.matricFormat) {
+        if (!data.name) {
             return { error: 'All fields are required' }
         }
         const res = await createDepartment({ ...data, facultyId: faculty.id })
@@ -186,12 +186,12 @@ export async function deleteDepartmentAction(id: string): Promise<ActionResponse
 
 // ==================== LEVEL ACTIONS ====================
 
-export async function createLevelAction(data: { name: string; departmentId: string, levelId: string }): Promise<ActionResponse> {
+export async function createLevelAction(data: { name: string; departmentId: string, matricFormat: string }): Promise<ActionResponse> {
     try {
         await requireAuth()
 
-        if (!data.name) {
-            return { error: 'Level name is required' }
+        if (!data.name || !data.departmentId || !data.matricFormat) {
+            return { error: 'All fields are required' }
         }
 
         await createLevel(data)
@@ -202,7 +202,7 @@ export async function createLevelAction(data: { name: string; departmentId: stri
     }
 }
 
-export async function updateLevelAction(id: string, data: { name: string }): Promise<ActionResponse> {
+export async function updateLevelAction(id: string, data: { name: string; matricFormat: string }): Promise<ActionResponse> {
     try {
         await requireAuth()
         await updateLevel(id, data)
