@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createHallAction, updateHallAction, deleteHallAction } from '@/lib/actions'
+import DeleteConfirmModal from '@/components/DeleteConfirmModal'
 
 interface Hall {
     id: string
@@ -17,6 +18,7 @@ export default function HallsClient({ halls }: { halls: Hall[] }) {
     const [editingHall, setEditingHall] = useState<Hall | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [deleteTarget, setDeleteTarget] = useState<{ id: string, name: string } | null>(null)
 
     // Form states
     const [name, setName] = useState('')
@@ -64,12 +66,22 @@ export default function HallsClient({ halls }: { halls: Hall[] }) {
         }
     }
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Delete this hall?')) return
+    const handleDelete = async (id: string, name: string) => {
+        setDeleteTarget({ id, name })
+    }
+
+    const confirmDelete = async () => {
+        if (!deleteTarget) return
         setLoading(true)
-        await deleteHallAction(id)
-        setLoading(false)
-        router.refresh()
+        try {
+            await deleteHallAction(deleteTarget.id)
+            router.refresh()
+        } catch (err) {
+            setError('Failed to delete hall.')
+        } finally {
+            setLoading(false)
+            setDeleteTarget(null)
+        }
     }
 
     return (
@@ -109,7 +121,7 @@ export default function HallsClient({ halls }: { halls: Hall[] }) {
                                         </button>
                                         <button
                                             className="btn btn-destructive"
-                                            onClick={() => handleDelete(hall.id)}
+                                            onClick={() => handleDelete(hall.id, hall.name)}
                                             disabled={loading}
                                         >
                                             Delete
@@ -184,6 +196,16 @@ export default function HallsClient({ halls }: { halls: Hall[] }) {
                     </div>
                 </div>
             )}
+
+            {/* Unified Delete Confirmation Modal */}
+            <DeleteConfirmModal
+                isOpen={!!deleteTarget}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={confirmDelete}
+                loading={loading}
+                title="Delete Hall"
+                message={`Are you sure you want to delete the hall "${deleteTarget?.name}"? This action cannot be undone and will remove all associated data.`}
+            />
         </div>
     )
 }

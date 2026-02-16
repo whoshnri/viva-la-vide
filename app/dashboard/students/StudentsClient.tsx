@@ -7,16 +7,17 @@ import {
     deleteDepartmentAction,
     createLevelAction,
     deleteLevelAction,
-    createStudentAction, 
+    createStudentAction,
     deleteStudentAction,
     uploadStudentsAction
 } from '@/lib/actions'
+import DeleteConfirmModal from '@/components/DeleteConfirmModal'
 
 interface Student {
     id: string
     matricNo: string
     name: string
-    realMatric : string
+    realMatric: string
 }
 
 interface Level {
@@ -43,6 +44,11 @@ export default function StudentsClient({ departments }: { departments: Departmen
     const [expandedLevel, setExpandedLevel] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [deleteTarget, setDeleteTarget] = useState<{
+        id: string,
+        type: 'student' | 'level' | 'department',
+        name?: string
+    } | null>(null)
 
     // Form states
     const [deptName, setDeptName] = useState('')
@@ -68,7 +74,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
         e.preventDefault()
         setLoading(true)
         setError(null)
-        const result = await createDepartmentAction({ name: deptName})
+        const result = await createDepartmentAction({ name: deptName })
         setLoading(false)
         if ('error' in result) {
             setError(result.error)
@@ -79,12 +85,28 @@ export default function StudentsClient({ departments }: { departments: Departmen
         }
     }
 
-    const handleDeleteDepartment = async (id: string) => {
-        if (!confirm('Delete this department and all its data?')) return
+    const handleDeleteDepartment = async (id: string, name: string) => {
+        setDeleteTarget({ id, type: 'department', name })
+    }
+
+    const confirmDelete = async () => {
+        if (!deleteTarget) return
         setLoading(true)
-        await deleteDepartmentAction(id)
-        setLoading(false)
-        router.refresh()
+        try {
+            if (deleteTarget.type === 'department') {
+                await deleteDepartmentAction(deleteTarget.id)
+            } else if (deleteTarget.type === 'level') {
+                await deleteLevelAction(deleteTarget.id)
+            } else if (deleteTarget.type === 'student') {
+                await deleteStudentAction(deleteTarget.id)
+            }
+            router.refresh()
+        } catch (err) {
+            setError('Failed to delete item.')
+        } finally {
+            setLoading(false)
+            setDeleteTarget(null)
+        }
     }
 
     const handleCreateLevel = async (e: React.FormEvent) => {
@@ -92,7 +114,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
         if (!showLevelModal) return
         setLoading(true)
         setError(null)
-        const result = await createLevelAction({ name: levelName, departmentId: showLevelModal, matricFormat : matricFormat })
+        const result = await createLevelAction({ name: levelName, departmentId: showLevelModal, matricFormat: matricFormat })
         setLoading(false)
         if ('error' in result) {
             setError(result.error)
@@ -103,12 +125,8 @@ export default function StudentsClient({ departments }: { departments: Departmen
         }
     }
 
-    const handleDeleteLevel = async (id: string) => {
-        if (!confirm('Delete this level and all students?')) return
-        setLoading(true)
-        await deleteLevelAction(id)
-        setLoading(false)
-        router.refresh()
+    const handleDeleteLevel = async (id: string, name: string) => {
+        setDeleteTarget({ id, type: 'level', name })
     }
 
     const handleCreateStudent = async (e: React.FormEvent) => {
@@ -117,7 +135,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
         setLoading(true)
         setError(null)
         let main = studentMatricNo
-        if(studentMatricNo.length < 3){
+        if (studentMatricNo.length < 3) {
             main = ("0".repeat(3 - studentMatricNo.length) + studentMatricNo)
         }
         const result = await createStudentAction({
@@ -135,12 +153,8 @@ export default function StudentsClient({ departments }: { departments: Departmen
         }
     }
 
-    const handleDeleteStudent = async (id: string) => {
-        if (!confirm('Delete this student?')) return
-        setLoading(true)
-        await deleteStudentAction(id)
-        setLoading(false)
-        router.refresh()
+    const handleDeleteStudent = async (id: string, name: string) => {
+        setDeleteTarget({ id, type: 'student', name })
     }
 
     const handleUploadStudents = async (e: React.FormEvent) => {
@@ -191,7 +205,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                     <span className="badge">
                                         {dept.levels.reduce((sum, l) => sum + l._count.students, 0)} students
                                     </span>
-                                    <span className="text-2xl">{expandedDept === dept.id ? '−' : '+'}</span>
+                                    <span className="text-2xl border border-gray-200 rounded-full px-2">{expandedDept === dept.id ? '−' : "+"}</span>
                                 </div>
                             </div>
 
@@ -208,7 +222,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                             </button>
                                             <button
                                                 className="btn btn-destructive"
-                                                onClick={(e) => { e.stopPropagation(); handleDeleteDepartment(dept.id) }}
+                                                onClick={(e) => { e.stopPropagation(); handleDeleteDepartment(dept.id, dept.name) }}
                                                 disabled={loading}
                                             >
                                                 Delete Dept
@@ -230,7 +244,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                                             <span className="font-bold">{level.name}</span>
                                                             <span className="badge">{level._count.students} students</span>
                                                         </div>
-                                                        <span>{expandedLevel === level.id ? '−' : '+'}</span>
+                                                        <span className="border border-gray-200 rounded-full px-2">{expandedLevel === level.id ? '−' : '+'}</span>
                                                     </div>
 
                                                     {expandedLevel === level.id && (
@@ -250,7 +264,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                                                 </button>
                                                                 <button
                                                                     className="btn btn-destructive"
-                                                                    onClick={(e) => { e.stopPropagation(); handleDeleteLevel(level.id) }}
+                                                                    onClick={(e) => { e.stopPropagation(); handleDeleteLevel(level.id, level.name) }}
                                                                     disabled={loading}
                                                                 >
                                                                     Delete Level
@@ -278,7 +292,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                                                                 <td>
                                                                                     <button
                                                                                         className="btn btn-destructive"
-                                                                                        onClick={() => handleDeleteStudent(student.id)}
+                                                                                        onClick={() => handleDeleteStudent(student.id, student.name)}
                                                                                         disabled={loading}
                                                                                     >
                                                                                         Delete
@@ -319,15 +333,15 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                     required
                                 />
                             </div>
-                        
-                            
+
+
                             {error && <p className="error-text mb-4">{error}</p>}
                             <div className="flex gap-4">
                                 <button type="button" className="btn flex-1" onClick={() => { setShowDeptModal(false); resetForms() }}>Cancel</button>
                                 <button type="submit" className="btn btn-primary flex-1" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
                             </div>
                         </form>
-                    </div>  
+                    </div>
                 </div>
             )}
 
@@ -348,9 +362,9 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                     placeholder="e.g. 100, ND1"
                                     required
                                 />
-                                
+
                             </div>
-                             <div className="form-group">
+                            <div className="form-group">
                                 <label className="form-label" htmlFor="matricFormat">Matric Format</label>
                                 <input
                                     type="text"
@@ -361,7 +375,7 @@ export default function StudentsClient({ departments }: { departments: Departmen
                                     placeholder="e.g. F/ND/23/321"
                                     required
                                 />
-                            <p className='text-sm px-4 py-3'>This will prefix the matric number for each student</p>
+                                <p className='text-sm px-4 py-3'>This will prefix the matric number for each student</p>
                             </div>
                             {error && <p className="error-text mb-4">{error}</p>}
                             <div className="flex gap-4">
@@ -441,6 +455,15 @@ export default function StudentsClient({ departments }: { departments: Departmen
                     </div>
                 </div>
             )}
+            {/* Unified Delete Confirmation Modal */}
+            <DeleteConfirmModal
+                isOpen={!!deleteTarget}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={confirmDelete}
+                loading={loading}
+                title={`Delete ${deleteTarget?.type === 'department' ? 'Department' : deleteTarget?.type === 'level' ? 'Level' : 'Student'}`}
+                message={`Are you sure you want to delete ${deleteTarget?.name ? `"${deleteTarget.name}"` : 'this item'}? This action cannot be undone${deleteTarget?.type === 'student' ? '.' : ' and will remove all associated data.'}`}
+            />
         </div>
     )
 }

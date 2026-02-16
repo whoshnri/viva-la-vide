@@ -30,10 +30,13 @@ export default function RegisterForm({ dbOnline }: { dbOnline: boolean }) {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50/50 p-4">
-            <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Create an Account</h1>
-                    <p className="text-sm text-gray-500 mt-2">Join Viva La Vida University Exam Allocator</p>
+            <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-2xl border border-gray-100">
+                <div className="text-center mb-10">
+                    <div className="flex justify-center mb-6">
+                        <img src="/logo.png" alt="YCT Logo" className="h-16 w-auto" />
+                    </div>
+                    <h1 className="text-3xl font-black tracking-tighter text-gray-900 uppercase">Register</h1>
+                    <p className="text-sm font-bold text-gray-500 mt-2 uppercase tracking-widest leading-relaxed">Join YCT CS Allocation System</p>
                 </div>
 
                 {!dbOnline && (
@@ -46,14 +49,14 @@ export default function RegisterForm({ dbOnline }: { dbOnline: boolean }) {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-group">
-                        <label className="form-label" htmlFor="name">Faculty Name</label>
+                        <label className="form-label" htmlFor="name">School Name</label>
                         <input
                             type="text"
                             id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="input"
-                            placeholder="e.g. Faculty of Science"
+                            placeholder="e.g. School of Computing"
                             required
                             disabled={!dbOnline}
                         />
@@ -103,9 +106,9 @@ export default function RegisterForm({ dbOnline }: { dbOnline: boolean }) {
                     </button>
                 </form>
 
-                <p className="mt-8 text-center text-sm text-gray-600">
+                <p className="mt-8 text-center text-sm font-medium text-gray-500">
                     Already have an account?{' '}
-                    <Link href="/login" className="font-semibold text-black hover:underline">
+                    <Link href="/login" className="font-black text-[#007A33] hover:underline uppercase tracking-widest">
                         Sign In
                     </Link>
                 </p>

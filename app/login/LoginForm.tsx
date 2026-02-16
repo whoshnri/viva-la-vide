@@ -29,10 +29,13 @@ export default function LoginForm({ dbOnline }: { dbOnline: boolean }) {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50/50 p-4">
-            <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Welcome Back</h1>
-                    <p className="text-sm text-gray-500 mt-2">Sign in to manage exam allocations</p>
+            <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-2xl border border-gray-100">
+                <div className="text-center mb-10">
+                    <div className="flex justify-center mb-6">
+                        <img src="/logo.png" alt="YCT Logo" className="h-16 w-auto" />
+                    </div>
+                    <h1 className="text-3xl font-black tracking-tighter text-gray-900 uppercase">Login</h1>
+                    <p className="text-sm font-bold text-gray-500 mt-2 uppercase tracking-widest">YCT Exam Allocation System</p>
                 </div>
 
                 {!dbOnline && (
@@ -61,7 +64,7 @@ export default function LoginForm({ dbOnline }: { dbOnline: boolean }) {
                     <div className="form-group">
                         <div className="flex justify-between items-center mb-1">
                             <label className="form-label mb-0" htmlFor="password">Password</label>
-                            <Link href="#" className="text-xs text-gray-500 hover:text-black hover:underline disabled">
+                            <Link href="#" className="text-xs font-bold text-gray-400 hover:text-[#007A33] transition-colors uppercase tracking-widest">
                                 Forgot password?
                             </Link>
                         </div>
@@ -92,10 +95,10 @@ export default function LoginForm({ dbOnline }: { dbOnline: boolean }) {
                     </button>
                 </form>
 
-                <p className="mt-8 text-center text-sm text-gray-600">
+                <p className="mt-8 text-center text-sm font-medium text-gray-500">
                     Don&apos;t have an account?{' '}
-                    <Link href="/register" className="font-semibold text-black hover:underline">
-                        Register
+                    <Link href="/register" className="font-black text-[#007A33] hover:underline uppercase tracking-widest">
+                        Register School
                     </Link>
                 </p>
             </div>

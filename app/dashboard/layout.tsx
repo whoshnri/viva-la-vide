@@ -18,18 +18,13 @@ export default async function DashboardLayout({
         <div className="min-h-screen flex">
             <aside className="sidebar">
                 <div className="mb-10 px-2">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="h-8 w-8 bg-black rounded-lg flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="white" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                            </svg>
-                        </div>
-                        <h1 className="text-xl font-bold tracking-tight uppercase">VIVA-LA-VIDA</h1>
+                    <div className="flex items-center gap-3 mb-8">
+                        <img src="/logo.png" alt="YCT Logo" className="h-10 w-auto" />
+                        <h1 className="text-xl font-black tracking-tighter text-gray-900 leading-none">YCT EXAMS</h1>
                     </div>
-
-                    <div className="px-3 py-2 bg-gray-100 rounded-lg">
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Faculty</p>
-                        <p className="text-sm font-semibold truncate" title={faculty.name}>{faculty.name}</p>
+                    <div className="px-4 py-3 bg-[#fbbf24]/20 rounded-xl border border-[#fbbf24]/30 shadow-sm">
+                       
+                        <p className="text-sm font-black truncate text-[#007A33]" title={faculty.name}>{faculty.name}</p>
                     </div>
                 </div>
 

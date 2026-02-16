@@ -40,8 +40,12 @@ export default function StudentPortal() {
         <div className="min-h-screen bg-gray-50/50 p-4 font-sans text-gray-900 flex flex-col items-center">
             {/* SEARCH SECTION (Hidden on Print) */}
             <div className="w-full max-w-md mt-10 print:hidden transition-all duration-300 ease-in-out">
-                <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                    <h1 className="text-2xl font-bold text-center mb-6 text-[#4A7044] tracking-tight">Student Exam Portal</h1>
+                <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                    <div className="flex justify-center mb-6">
+                        <img src="/logo.png" alt="YCT Logo" className="h-20 w-auto" />
+                    </div>
+                    <h1 className="text-3xl font-extrabold text-center mb-2 text-[#059669] tracking-tight">YCT Exam Portal</h1>
+                    <p className="text-center text-gray-500 mb-8 font-medium">CS Exam Allocation System</p>
                     <form onSubmit={handleSearch} className="space-y-5">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">Matriculation Number</label>
@@ -56,7 +60,7 @@ export default function StudentPortal() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-[#4A7044] text-white btn py-3 px-4 font-semibold hover:bg-[#3d5c38] hover:shadow-md transition-all disabled:opacity-70 disabled:shadow-none flex justify-center items-center text-base rounded-lg"
+                            className="w-full bg-[#059669] text-white btn py-3.5 px-4 font-bold hover:bg-[#047857] hover:shadow-lg transition-all disabled:opacity-70 disabled:shadow-none flex justify-center items-center text-lg rounded-xl"
                         >
                             {loading ? (
                                 <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -80,18 +84,21 @@ export default function StudentPortal() {
             {/* RESULTS SECTION (Visible on Print) */}
             {data && (
                 <div style={{
-                    zoom : .85
+                    zoom: .85
                 }}
-                 className="w-full max-w-3xl mt-8 bg-white p-8 md:p-10 rounded-xl shadow-xl border border-gray-100 print:shadow-none print:border-none print:w-full print:mt-0 print:p-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    className="w-full max-w-3xl mt-8 bg-white p-8 md:p-10 rounded-xl shadow-xl border border-gray-100 print:shadow-none print:border-none print:w-full print:mt-0 print:p-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {/* SLIP HEADER */}
-                    <div className="flex justify-between items-start border-b border-gray-100 pb-6 mb-8">
-                        <div>
-                            <h2 className="text-2xl font-bold text-[#4A7044] uppercase tracking-wide">Examination Seat Slip</h2>
-                            <p className="text-gray-500 font-medium mt-1">Viva La Vida University</p>
+                    <div className="flex justify-between items-center border-b-2 border-gray-100 pb-6 mb-8">
+                        <div className="flex items-center gap-4">
+                            <img src="/logo.png" alt="YCT Logo" className="h-16 w-auto" />
+                            <div>
+                                <h2 className="text-2xl font-black text-[#059669] uppercase tracking-tight">Examination Seat Slip</h2>
+                                <p className="text-gray-600 font-bold mt-0.5">Yaba College of Technology</p>
+                            </div>
                         </div>
                         <div className="text-right">
-                            <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#4A7044]/10 text-[#4A7044] text-xs font-bold uppercase tracking-wider">
-                                Official Slip
+                            <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#fbbf24] text-[#1a1a1a] text-xs font-black uppercase tracking-widest shadow-sm">
+                                Official Document
                             </div>
                         </div>
                     </div>
@@ -109,9 +116,9 @@ export default function StudentPortal() {
                             </p>
                         </div>
                         <div>
-                            <p className="text-gray-400 uppercase text-[10px] font-bold tracking-widest mb-1">Department & Faculty</p>
-                            <p className="font-semibold text-gray-900 text-base">{data.level.department.name}</p>
-                            <p className="text-gray-500 text-xs mt-0.5">Faculty of {data.level.department.faculty.name}</p>
+                            <p className="text-gray-400 uppercase text-[10px] font-bold tracking-widest mb-1">Department & School</p>
+                            <p className="font-bold text-gray-900 text-base">{data.level.department.name}</p>
+                            <p className="text-[#059669] font-semibold text-xs mt-0.5">School of {data.level.department.faculty.name}</p>
                         </div>
                         <div className="text-right">
                             <p className="text-gray-400 uppercase text-[10px] font-bold tracking-widest mb-1">Level</p>
@@ -121,11 +128,11 @@ export default function StudentPortal() {
 
                     {/* EXAM TABLE */}
                     <div className="mb-10">
-                        <h3 className="text-Base font-bold text-[#4A7044] mb-4 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <h3 className="text-base font-black text-[#059669] mb-4 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
-                            Allocated Exams
+                            Exam Allocation Details
                         </h3>
                         {data.seatAssignments.length === 0 ? (
                             <div className="p-8 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-center">
@@ -159,7 +166,7 @@ export default function StudentPortal() {
                                                     <div className="text-xs text-gray-500 truncate max-w-[150px]" title={assignment.hall.name}>{assignment.hall.name}</div>
                                                 </td>
                                                 <td className="p-4 text-center border-none">
-                                                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#4A7044]/10 text-[#4A7044] font-bold text-sm ring-1 ring-[#4A7044]/20">
+                                                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#059669] text-white font-black text-lg shadow-md ring-2 ring-[#059669]/20">
                                                         {assignment.seatNumber}
                                                     </div>
                                                 </td>
@@ -178,7 +185,7 @@ export default function StudentPortal() {
                             <li>Please arrive at the examination hall at least <strong>30 minutes</strong> before the scheduled time.</li>
                             <li>You must present this <strong>Seat Slip</strong> and your <strong>Student ID Card</strong> for verification.</li>
                             <li>Electronic devices, including mobile phones and smartwatches, are <strong>strictly prohibited</strong> inside the hall.</li>
-                            <li>Malpractice of any kind will result in immediate disqualification and disciplinary action by the Faculty Board.</li>
+                            <li>Malpractice of any kind will result in immediate disqualification and disciplinary action by the School Board.</li>
                         </ul>
                     </div>
 
@@ -194,10 +201,10 @@ export default function StudentPortal() {
                             onClick={handlePrint}
                             className="bg-white text-gray-900 border border-gray-200 py-2.5 px-6 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 mx-auto rounded-lg shadow-sm hover:shadow text-sm"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.198-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
                             </svg>
-                            Print Seat Slip
+                            Download / Print Slip
                         </button>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createExamAction, deleteExamAction } from '@/lib/actions'
+import DeleteConfirmModal from '@/components/DeleteConfirmModal'
 
 interface Hall {
     id: string
@@ -43,6 +44,7 @@ export default function ExamsClient({
     const [selectedLevels, setSelectedLevels] = useState<string[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [deleteTarget, setDeleteTarget] = useState<{ id: string, name: string } | null>(null)
 
     // Form states
     const [title, setTitle] = useState('')
@@ -101,12 +103,22 @@ export default function ExamsClient({
         }
     }
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Delete this exam?')) return
+    const handleDelete = async (id: string, name: string) => {
+        setDeleteTarget({ id, name })
+    }
+
+    const confirmDelete = async () => {
+        if (!deleteTarget) return
         setLoading(true)
-        await deleteExamAction(id)
-        setLoading(false)
-        router.refresh()
+        try {
+            await deleteExamAction(deleteTarget.id)
+            router.refresh()
+        } catch (err) {
+            setError('Failed to delete exam.')
+        } finally {
+            setLoading(false)
+            setDeleteTarget(null)
+        }
     }
 
     return (
@@ -145,7 +157,7 @@ export default function ExamsClient({
                                     </Link>
                                     <button
                                         className="btn btn-destructive"
-                                        onClick={() => handleDelete(exam.id)}
+                                        onClick={() => handleDelete(exam.id, exam.title)}
                                         disabled={loading}
                                     >
                                         Delete
@@ -284,6 +296,16 @@ export default function ExamsClient({
                     </div>
                 </div>
             )}
+
+            {/* Unified Delete Confirmation Modal */}
+            <DeleteConfirmModal
+                isOpen={!!deleteTarget}
+                onClose={() => setDeleteTarget(null)}
+                onConfirm={confirmDelete}
+                loading={loading}
+                title="Delete Exam"
+                message={`Are you sure you want to delete the exam "${deleteTarget?.name}"? This action cannot be undone and will remove all associated data.`}
+            />
         </div>
     )
 }

@@ -183,7 +183,7 @@ export default function ExamDetailClient({ exam }: { exam: ExamData }) {
             {/* Overview Tab */}
             {activeTab === 'overview' && (
                 <div>
-                    <div className="grid grid-2 mb-6">
+                    <div className="grid grid-cols-2 gap-6 mb-6">
                         <div className="stat-card">
                             <div className="stat-value">{totalStudents}</div>
                             <div className="stat-label">Total Students</div>
@@ -249,7 +249,7 @@ export default function ExamDetailClient({ exam }: { exam: ExamData }) {
                         {error && <input disabled className="error-text mb-4 truncate" value={error} />}
 
                         {exam.seatAssignments.length > 0 && (
-                            <input disabled className="success-text mb-4 truncate" value={`✓ ${exam.seatAssignments.length} seats have been allocated`} />
+                            <button disabled className="disabled:bg-yellow-700 success-text text-white rounded-xl mr-2 mb-4 w-fit p-2">ALLOCATION GENERATED</button>
                         )}
 
                         <button
