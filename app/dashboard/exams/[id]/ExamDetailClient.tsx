@@ -12,7 +12,7 @@ interface SeatAssignment {
         realMatric : string
         level: {
             name: string
-            department: { name: string; matricFormat: string }
+            department: { name: string}
         }
     }
     hall: { name: string; code: string }
@@ -100,7 +100,7 @@ export default function ExamDetailClient({ exam }: { exam: ExamData }) {
             seat.hall.name,
             seat.hall.code,
             seat.student.matricNo,
-            `${seat.student.level.department.matricFormat}${seat.student.matricNo}`,
+            seat.student.realMatric,
             seat.student.name,
             seat.student.level.department.name,
             seat.student.level.name
@@ -119,7 +119,7 @@ export default function ExamDetailClient({ exam }: { exam: ExamData }) {
             'Hall': seat.hall.name,
             'Hall Code': seat.hall.code,
             'Matric No': seat.student.matricNo,
-            'Full Matric': `${seat.student.level.department.matricFormat}${seat.student.matricNo}`,
+            'Full Matric': seat.student.realMatric,
             'Student Name': seat.student.name,
             'Department': seat.student.level.department.name,
             'Level': seat.student.level.name
