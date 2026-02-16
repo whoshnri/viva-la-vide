@@ -30,7 +30,6 @@ interface Level {
 interface Department {
     id: string
     name: string
-    matricFormat: string
     levels: Level[]
 }
 
